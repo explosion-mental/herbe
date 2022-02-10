@@ -1,6 +1,8 @@
 # 🌱 herbe
 
-My build of `herbe`
+My build of `herbe`.
+
+The goal is to replace notify-send.
 
 
 
