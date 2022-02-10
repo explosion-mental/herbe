@@ -204,12 +204,9 @@ main(int argc, char *argv[])
 	attributes.border_pixel = color.pixel;
 
 
-	int num_of_lines = 0;
 	int max_text_width = width - 2 * padding;
-	int lines_size = 5;
-	char **lines = malloc(lines_size * sizeof(char *));
-	if (!lines)
-		die("malloc failed");
+	char **lines = NULL;
+	size_t num_of_lines = 0;
 
 	XftFont *font = XftFontOpenName(dpy, screen, font_pattern);
 
@@ -218,19 +215,17 @@ main(int argc, char *argv[])
 			duration = atoi(argv[++i]);
 			continue;
 		}
-		for (unsigned int eol = get_max_len(argv[i], font, max_text_width); eol; argv[i] += eol, num_of_lines++, eol = get_max_len(argv[i], font, max_text_width)) {
-			if (lines_size <= num_of_lines) {
-				lines = realloc(lines, (lines_size += 5) * sizeof(char *));
-				if (!lines)
-					die("realloc failed");
-			}
+		for (unsigned int eol = get_max_len(argv[i], font, max_text_width); eol; argv[i] += eol, eol = get_max_len(argv[i], font, max_text_width)) {
 
-			lines[num_of_lines] = malloc((eol + 1) * sizeof(char));
-			if (!lines[num_of_lines])
-				die("malloc failed");
+			if (!(lines = reallocarray(lines, ++num_of_lines, sizeof(char *))))
+				die("reallocarray failed");
 
-			strncpy(lines[num_of_lines], argv[i], eol);
-			lines[num_of_lines][eol] = '\0';
+			lines[num_of_lines - 1] = reallocarray(NULL, eol + 1, sizeof(char));
+			if (!lines[num_of_lines - 1])
+				die("reallocarray failed");
+
+			strncpy(lines[num_of_lines - 1], argv[i], eol);
+			lines[num_of_lines - 1][eol] = '\0';
 		}
 	}
 
@@ -270,7 +265,7 @@ main(int argc, char *argv[])
 
 		if (event.type == Expose) {
 			XClearWindow(dpy, window);
-			for (int i = 0; i < num_of_lines; i++)
+			for (size_t i = 0; i < num_of_lines; i++)
 				XftDrawStringUtf8(draw, &color, font, padding, line_spacing * i + text_height * (i + 1) + padding,
 								  (FcChar8 *)lines[i], strlen(lines[i]));
 		} else if (event.type == ButtonPress) {
@@ -284,7 +279,7 @@ main(int argc, char *argv[])
 	}
 
 
-	for (int i = 0; i < num_of_lines; i++)
+	for (size_t i = 0; i < num_of_lines; i++)
 		free(lines[i]);
 
     	if (used_y_offset == *y_offset)
