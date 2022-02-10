@@ -14,5 +14,6 @@ enum corners corner = TOP_RIGHT;
 
 static unsigned int duration = 5; /* in seconds */
 
-#define DISMISS_BUTTON Button1
-#define ACTION_BUTTON Button3
+/* mouse bindings */
+static const KeySym dismiss = Button1;
+static const KeySym action = Button2;

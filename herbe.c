@@ -78,7 +78,7 @@ expire(int sig)
 	XEvent event;
 	event.type = ButtonPress;
 	/* SIGUSR1 dismiss, SIGUSR2 action */
-	event.xbutton.button = (sig == SIGUSR2) ? (ACTION_BUTTON) : (DISMISS_BUTTON);
+	event.xbutton.button = (sig == SIGUSR2) ? action : dismiss;
 	XSendEvent(dpy, window, 0, 0, &event);
 	XFlush(dpy);
 }
@@ -256,9 +256,9 @@ main(int argc, char *argv[])
 				XftDrawStringUtf8(draw, &color, font, padding, line_spacing * i + text_height * (i + 1) + padding,
 								  (FcChar8 *)lines[i], strlen(lines[i]));
 		} else if (event.type == ButtonPress) {
-			if (event.xbutton.button == DISMISS_BUTTON)
+			if (event.xbutton.button == dismiss)
 				break;
-			else if (event.xbutton.button == ACTION_BUTTON) {
+			else if (event.xbutton.button == action) {
 				exit_code = EXIT_ACTION;
 				break;
 			}
