@@ -36,7 +36,7 @@ die(const char *format, ...)
 	exit(EXIT_FAIL);
 }
 
-int
+static int
 maxlen(char *string, XftFont *font, int max_text_width)
 {
 	int i;
@@ -52,7 +52,6 @@ maxlen(char *string, XftFont *font, int max_text_width)
 			eol++;
 			XftTextExtentsUtf8(dpy, font, (FcChar8 *)string, eol, &info);
 		}
-
 		eol--;
 	}
 
@@ -73,7 +72,7 @@ maxlen(char *string, XftFont *font, int max_text_width)
 	return eol == 0 ? temp : ++eol;
 }
 
-void
+static void
 expire(int sig)
 {
 	XEvent event;
@@ -84,7 +83,7 @@ expire(int sig)
 	XFlush(dpy);
 }
 
-void
+static void
 read_y_offset(unsigned int **offset, int *id)
 {
     int shm_id = shmget(8432, sizeof(unsigned int), IPC_CREAT | 0660);
@@ -100,7 +99,7 @@ read_y_offset(unsigned int **offset, int *id)
     *id = shm_id;
 }
 
-void
+static void
 xrdbloadcolor(XrmDatabase xrdb, const char *name, char *var)
 {
 	XrmValue value;
@@ -124,7 +123,7 @@ xrdbloadcolor(XrmDatabase xrdb, const char *name, char *var)
         }
 }
 
-void
+static void
 loadxrdb(XrmDatabase xrdb)
 {
 	xrdbloadcolor(xrdb, "color0", background_color);
@@ -133,18 +132,18 @@ loadxrdb(XrmDatabase xrdb)
 	XrmDestroyDatabase(xrdb);	/* close the database */
 }
 
-void
+static void
 free_y_offset(int id)
 {
     shmctl(id, IPC_RMID, NULL);
 }
 
-void
+static void
 setup(void)
 {
 	struct sigaction act_expire;
 
-	/* expire() */
+	/* init signals */
 	act_expire.sa_handler = expire;
 	act_expire.sa_flags = SA_RESTART;
 	sigemptyset(&act_expire.sa_mask);
