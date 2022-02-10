@@ -6,7 +6,7 @@ My build of `herbe`
 
 Daemon-less notifications without D-Bus. Minimal and lightweight.
 
-##TODO
+## TODO
 
 - write to a file the notifications, with this it would be possible to have a 'history' (could be done with shell but later added inside the program)
 - multiple fonts
