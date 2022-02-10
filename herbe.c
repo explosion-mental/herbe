@@ -186,6 +186,7 @@ main(int argc, char *argv[])
 	loadxrdb(db);
 
 	XSetWindowAttributes attributes;
+	attributes.event_mask = ExposureMask | ButtonPressMask;
 	attributes.override_redirect = True;
 
 	XftColor color;
@@ -240,12 +241,11 @@ main(int argc, char *argv[])
 		y = screen_height - height - border_size * 2 - y;
 
 	window = XCreateWindow(dpy, RootWindow(dpy, screen), x, y, width, height, border_size, DefaultDepth(dpy, screen),
-						   CopyFromParent, visual, CWOverrideRedirect | CWBackPixel | CWBorderPixel, &attributes);
+			CopyFromParent, visual, CWOverrideRedirect | CWBackPixel | CWBorderPixel | CWEventMask, &attributes);
 
 	XftDraw *draw = XftDrawCreate(dpy, window, visual, cmap);
 	XftColorAllocName(dpy, visual, cmap, font_color, &color);
 
-	XSelectInput(dpy, window, ExposureMask | ButtonPress);
 	XMapWindow(dpy, window);
 
 	if (duration != 0)
