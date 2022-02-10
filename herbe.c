@@ -146,14 +146,7 @@ free_y_offset(int id)
 void
 setup(void)
 {
-	struct sigaction act_expire, act_ignore;
-
-	/* ignore this signals */
-	act_ignore.sa_handler = SIG_IGN;
-	act_ignore.sa_flags = 0;
-	sigemptyset(&act_ignore.sa_mask);
-	sigaction(SIGUSR1, &act_ignore, 0);
-	sigaction(SIGUSR2, &act_ignore, 0);
+	struct sigaction act_expire;
 
 	/* expire() */
 	act_expire.sa_handler = expire;
