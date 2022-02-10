@@ -1,7 +1,7 @@
+VERSION = 1.0_fork
 PREFIX = /usr/local
 CC = cc
-CFLAGS = -std=c99 -pedantic -Wall -Wextra -lX11 -lXft -I/usr/include/freetype2 -pthread -D_DEFAULT_SOURCE -D_POSIX_C_SOURCE=200809L
-
+CFLAGS = -std=c99 -pedantic -Wall -Wextra -lX11 -lXft -I/usr/include/freetype2 -pthread -D_DEFAULT_SOURCE -D_POSIX_C_SOURCE=200809L -DVERSION=\"${VERSION}\"
 all: herbe
 
 config.h:

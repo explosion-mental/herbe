@@ -1,16 +1,12 @@
-#include <X11/Xlib.h>
-#include <X11/Xft/Xft.h>
-#include <X11/Xresource.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <signal.h>
-#include <unistd.h>
-#include <string.h>
-#include <stdarg.h>
-#include <fcntl.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
-
+#include <X11/Xft/Xft.h>
+#include <X11/Xresource.h>
+#include <X11/Xlib.h>
+#include <signal.h>
+#include <stdarg.h>
+#include <stdio.h>
+#include <unistd.h>
 
 #define EXIT_ACTION 0
 #define EXIT_FAIL 1
@@ -41,7 +37,7 @@ die(const char *format, ...)
 }
 
 int
-get_max_len(char *string, XftFont *font, int max_text_width)
+maxlen(char *string, XftFont *font, int max_text_width)
 {
 	int i;
 	int eol = strlen(string);
@@ -173,7 +169,6 @@ setup(void)
 int
 main(int argc, char *argv[])
 {
-	/* TODO handle -t for wait time */
 	if (argc == 1)
 		die("usage: %s message", argv[0]);
 
@@ -207,15 +202,15 @@ main(int argc, char *argv[])
 	for (int i = 1; i < argc; i++) {
 		if (!strcmp(argv[i], "-t")) {  /* duration */
 			duration = atoi(argv[++i]);
-			continue;
+			continue; /* ignore this argument */
+		} else if (!strcmp(argv[i], "-v")) {
+			puts("herbe-"VERSION);
+			exit(0);
 		}
-		for (unsigned int eol = get_max_len(argv[i], font, max_text_width); eol; argv[i] += eol, eol = get_max_len(argv[i], font, max_text_width)) {
+		for (unsigned int eol = maxlen(argv[i], font, max_text_width); eol; argv[i] += eol, eol = maxlen(argv[i], font, max_text_width)) {
 
-			if (!(lines = reallocarray(lines, ++num_of_lines, sizeof(char *))))
-				die("reallocarray failed");
-
-			lines[num_of_lines - 1] = reallocarray(NULL, eol + 1, sizeof(char));
-			if (!lines[num_of_lines - 1])
+			if (!(lines = reallocarray(lines, ++num_of_lines, sizeof(char *)))
+			|| !(lines[num_of_lines - 1] = reallocarray(NULL, eol + 1, sizeof(char))))
 				die("reallocarray failed");
 
 			strncpy(lines[num_of_lines - 1], argv[i], eol);
