@@ -203,6 +203,7 @@ main(int argc, char *argv[])
 	XftColorAllocName(dpy, visual, cmap, border_color, &color);
 	attributes.border_pixel = color.pixel;
 
+
 	int num_of_lines = 0;
 	int max_text_width = width - 2 * padding;
 	int lines_size = 5;
@@ -213,6 +214,10 @@ main(int argc, char *argv[])
 	XftFont *font = XftFontOpenName(dpy, screen, font_pattern);
 
 	for (int i = 1; i < argc; i++) {
+		if (!strcmp(argv[i], "-t")) {  /* duration */
+			duration = atoi(argv[++i]);
+			continue;
+		}
 		for (unsigned int eol = get_max_len(argv[i], font, max_text_width); eol; argv[i] += eol, num_of_lines++, eol = get_max_len(argv[i], font, max_text_width)) {
 			if (lines_size <= num_of_lines) {
 				lines = realloc(lines, (lines_size += 5) * sizeof(char *));
