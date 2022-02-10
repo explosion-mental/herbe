@@ -1,15 +1,14 @@
-CFLAGS = -Wall -Wextra -pedantic -lX11 -lXft -I/usr/include/freetype2 -pthread
-
 PREFIX = /usr/local
 CC = cc
+CFLAGS = -std=c99 -pedantic -Wall -Wextra -lX11 -lXft -I/usr/include/freetype2 -pthread -D_DEFAULT_SOURCE -D_POSIX_C_SOURCE=200809L
 
 all: herbe
 
 config.h:
-	cp config.def.h config.h
+	cp -f config.def.h config.h
 
 herbe: herbe.c config.h
-	$(CC) herbe.c $(CFLAGS) -o herbe
+	${CC} herbe.c ${CFLAGS} -o herbe
 
 install: herbe
 	mkdir -p ${DESTDIR}${PREFIX}/bin
