@@ -165,11 +165,18 @@ setup(void)
 	screen_height = DisplayHeight(dpy, screen);
 }
 
+static void
+usage(void)
+{
+	fputs("usage: herbe [-v] [-t miliseconds] [-u critical]\n", stderr);
+	exit(1);
+}
+
 int
 main(int argc, char *argv[])
 {
 	if (argc == 1)
-		die("usage: %s message", argv[0]);
+		usage();
 
 	XrmInitialize();
 	setup();
@@ -196,16 +203,66 @@ main(int argc, char *argv[])
 	char **lines = NULL;
 	size_t num_of_lines = 0;
 
+	/* stores if the flag it's already been evaluated */
+	int flag[] = { 0, 0, 0, 0, 0, 0 };
+
 	XftFont *font = XftFontOpenName(dpy, screen, font_pattern);
 
 	for (int i = 1; i < argc; i++) {
-		if (!strcmp(argv[i], "-t")) {  /* duration */
-			duration = atoi(argv[++i]);
+
+		//TODO check if the argument that the flag requires is present.
+		//Currently if, for example, we run `herbe Hello World -t` the
+		//program will segment fault
+
+		/* parse notify-send flags */
+		if (flag[0] != 1 &&
+		(!strcmp(argv[i], "-t")
+		|| !strcmp (argv[i], "expire-time"))) {  /* duration */
+			/* convert miliseconds to seconds (lower rounding) */
+			duration = ((atoi(argv[++i]) + 500) / 1000);
+			if (duration == 0) /* fallback in case miliseconds is too low */
+				duration = 1;
+			flag[0] = 1;
 			continue; /* ignore this argument */
-		} else if (!strcmp(argv[i], "-v")) {
+		} else if (flag[1] != 1 &&
+			(!strcmp(argv[i], "-u")
+			|| !strcmp(argv[i], "--urgency"))) {
+				if (!strcmp(argv[++i], "critical")) {
+					duration = 0;
+					i--; /* restore the idx */
+				}
+				i++; /* unused next arg */
+				flag[1] = 1;
+				continue;
+		} else if (flag[2] != 1 &&
+			(!strcmp(argv[i], "-a")
+			|| !strcmp(argv[i], "--app-name"))) {
+			i++; /* unused next arg */
+			flag[2] = 1;
+			continue;
+		} else if (flag[3] != 1 &&
+			(!strcmp(argv[i], "-i")
+			|| !strcmp(argv[i], "--icon"))) {
+			i++; /* unused next arg */
+			flag[3] = 1;
+			continue;
+		} else if (flag[4] != 1 &&
+			(!strcmp(argv[i], "-c")
+			|| !strcmp(argv[i], "--category"))) {
+			i++; /* unused next arg */
+			flag[4] = 1;
+			continue;
+		} else if (flag[5] != 1 &&
+			(!strcmp(argv[i], "-h")
+			|| !strcmp(argv[i], "--hint"))) { /* ignore flags */
+			i++; /* unused next arg */
+			flag[5] = 1;
+			continue;
+		} else if (!strcmp(argv[i], "-v")) { /* version info */
 			puts("herbe-"VERSION);
 			exit(0);
 		}
+
 		for (unsigned int eol = maxlen(argv[i], font, max_text_width); eol; argv[i] += eol, eol = maxlen(argv[i], font, max_text_width)) {
 
 			if (!(lines = reallocarray(lines, ++num_of_lines, sizeof(char *)))

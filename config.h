@@ -12,6 +12,7 @@ static const unsigned int pos_y = 60;
 
 enum corners corner = TOP_RIGHT;
 
+/* overwritten by -t flag, if 0 the window won't close */
 static unsigned int duration = 5; /* in seconds */
 
 /* mouse bindings */
