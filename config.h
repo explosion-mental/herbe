@@ -1,7 +1,7 @@
 static char background_color[] = "#3e3e3e";
 static char border_color[] = "#ececec";
 static char font_color[] = "#ececec";
-static char font_pattern[] = "monospace:size=10";
+static char font_pattern[] = "Monofur Nerd Font:size=20:antialias=true:autohint=true";
 static const unsigned line_spacing = 5;
 static const unsigned int padding = 15;
 

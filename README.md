@@ -1,17 +1,23 @@
 # 🌱 herbe
-> Daemon-less notifications without D-Bus. Minimal and lightweight.
 
-<p align="center">
-  <img src="https://user-images.githubusercontent.com/24730635/90975811-cd62fd00-e537-11ea-9169-92e68a71d0a0.gif" />
-</p>
+My build of `herbe`
+
+
+
+Daemon-less notifications without D-Bus. Minimal and lightweight.
+
+##TODO
+
+- write to a file the notifications, with this it would be possible to have a 'history' (could be done with shell but later added inside the program)
+- multiple fonts
+- configurable alpha (tranparency)
 
 ## Features
-* Under 200 lines of code
+* Around 200-300 lines of code
 * Doesn't run in the background, just displays the notification and exits
 * No external dependencies except Xlib and Xft
-* Configurable through `config.h` or Xresources ([using this patch](https://github.com/dudik/herbe/pull/11))
+* Configurable through `config.h` and Xresources
 * [Actions support](#actions)
-* Extensible through [patches](https://github.com/dudik/herbe/pulls?q=is%3Aopen+is%3Apr+label%3Apatch)
 
 ## Table of contents
 
