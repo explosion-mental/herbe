@@ -7,6 +7,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <regex.h>
 
 #define EXIT_ACTION 0
 #define EXIT_FAIL 1
@@ -208,13 +209,23 @@ main(int argc, char *argv[])
 
 	XftFont *font = XftFontOpenName(dpy, screen, font_pattern);
 
-	for (int i = 1; i < argc; i++) {
+	regex_t regex;
 
+	if (regcomp(&regex, "^--.*=.*$", 0)) {
+		fprintf(stderr, "Could not compile regex\n");
+		return 1;
+	}
+
+	for (int i = 1; i < argc; i++) {
 		//TODO check if the argument that the flag requires is present.
 		//Currently if, for example, we run `herbe Hello World -t` the
 		//program will segment fault
 
-		/* parse notify-send flags */
+		/* parse notify-send --X=Y flags */
+		if (!regexec(&regex, argv[i], 0, NULL, 0)) {
+			continue; /* ignore this argument */
+		}
+
 		if (flag[0] != 1 &&
 		(!strcmp(argv[i], "-t")
 		|| !strcmp (argv[i], "expire-time"))) {  /* duration */
@@ -273,6 +284,8 @@ main(int argc, char *argv[])
 			lines[num_of_lines - 1][eol] = '\0';
 		}
 	}
+
+	regfree(&regex);
 
     int y_offset_id;
     unsigned int *y_offset;
